@@ -1,0 +1,47 @@
+name: Update formula
+
+on:
+  # nccapo/stvena sends this after a successful release.
+  repository_dispatch:
+    types: [stvena-release]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release tag to track (blank = latest stable release)"
+        required: false
+        type: string
+  # Safety net in case the dispatch from the release workflow never arrives.
+  schedule:
+    - cron: "0 */6 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update the formula
+        env:
+          VERSION: ${{ github.event.inputs.version || github.event.client_payload.version || '' }}
+        run: ./scripts/update-formula.sh $VERSION
+
+      - uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Check formula style
+        run: brew style Formula/stvena.rb
+
+      - name: Commit
+        run: |
+          if git diff --quiet -- Formula/stvena.rb; then
+            echo "Formula already tracks the requested release."
+            exit 0
+          fi
+          version="$(sed -n 's/^  version "\(.*\)"/\1/p' Formula/stvena.rb)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "stvena $version" -- Formula/stvena.rb
+          git push

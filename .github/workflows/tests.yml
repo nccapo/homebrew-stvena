@@ -1,0 +1,41 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        # macOS arm64 and Linux amd64 cover two of the four published archives.
+        # Add macos-15-intel / ubuntu-24.04-arm here to exercise the other two.
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Check formula style
+        run: brew style Formula/stvena.rb
+
+      - name: Tap this checkout
+        run: brew tap nccapo/stvena "$GITHUB_WORKSPACE"
+
+      - name: Install
+        run: brew install --verbose nccapo/stvena/stvena
+
+      - name: Run the formula test block
+        run: brew test nccapo/stvena/stvena
+
+      - name: Audit
+        run: brew audit --formula --online --git nccapo/stvena/stvena

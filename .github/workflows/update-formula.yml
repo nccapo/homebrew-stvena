@@ -30,7 +30,7 @@ jobs:
       - name: Update the formula
         env:
           VERSION: ${{ github.event.inputs.version || github.event.client_payload.version || '' }}
-        run: ./scripts/update-formula.sh $VERSION
+        run: ./scripts/update-formula.sh "$VERSION"
 
       - name: Commit
         run: |

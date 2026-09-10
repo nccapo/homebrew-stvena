@@ -19,27 +19,41 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      # This action checks the repository out itself and links it in as the
+      # nccapo/stvena tap. Do not add actions/checkout: a second checkout with
+      # persist-credentials: false strips the credentials this action's own git
+      # operations need, and it retries for ~17 minutes before failing.
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
 
-      - uses: Homebrew/actions/setup-homebrew@master
+      - name: Cache Homebrew Bundler RubyGems
+        id: cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.set-up-homebrew.outputs.gems-path }}
+          key: ${{ runner.os }}-rubygems-${{ steps.set-up-homebrew.outputs.gems-hash }}
+          restore-keys: ${{ runner.os }}-rubygems-
+
+      - name: Install Homebrew Bundler RubyGems
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: brew install-bundler-gems
+
+      - name: Resolve the tap name
+        run: echo "TAP=${{ steps.set-up-homebrew.outputs.tap-name }}" >>"$GITHUB_ENV"
+
+      # Homebrew 6.0 will not evaluate a non-official tap's Ruby until it is trusted.
+      - name: Trust the formula
+        run: brew trust --formula "$TAP/stvena"
 
       - name: Check formula style
-        run: brew style Formula/stvena.rb
-
-      # Homebrew 6.0 refuses to evaluate a non-official tap's Ruby until it is
-      # trusted, and tapping validates every formula, so trust comes first.
-      - name: Tap this checkout
-        run: |
-          brew trust --formula nccapo/stvena/stvena
-          brew tap nccapo/stvena "$GITHUB_WORKSPACE"
+        run: brew style "$TAP"
 
       - name: Install
-        run: brew install --verbose nccapo/stvena/stvena
+        run: brew install --verbose "$TAP/stvena"
 
       - name: Run the formula test block
-        run: brew test nccapo/stvena/stvena
+        run: brew test "$TAP/stvena"
 
       - name: Audit
-        run: brew audit --formula --online nccapo/stvena/stvena
+        run: brew audit --formula --online "$TAP/stvena"

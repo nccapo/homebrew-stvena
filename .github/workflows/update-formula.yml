@@ -22,17 +22,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      # Plain checkout here, not Homebrew/actions/setup-homebrew: this job only
+      # rewrites and pushes a file, and the push needs the checkout credentials.
+      # The Tests workflow runs style, install and audit on the resulting commit.
       - uses: actions/checkout@v4
 
       - name: Update the formula
         env:
           VERSION: ${{ github.event.inputs.version || github.event.client_payload.version || '' }}
         run: ./scripts/update-formula.sh $VERSION
-
-      - uses: Homebrew/actions/setup-homebrew@master
-
-      - name: Check formula style
-        run: brew style Formula/stvena.rb
 
       - name: Commit
         run: |

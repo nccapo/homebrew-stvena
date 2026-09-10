@@ -28,8 +28,12 @@ jobs:
       - name: Check formula style
         run: brew style Formula/stvena.rb
 
+      # Homebrew 6.0 refuses to evaluate a non-official tap's Ruby until it is
+      # trusted, and tapping validates every formula, so trust comes first.
       - name: Tap this checkout
-        run: brew tap nccapo/stvena "$GITHUB_WORKSPACE"
+        run: |
+          brew trust --formula nccapo/stvena/stvena
+          brew tap nccapo/stvena "$GITHUB_WORKSPACE"
 
       - name: Install
         run: brew install --verbose nccapo/stvena/stvena
@@ -38,4 +42,4 @@ jobs:
         run: brew test nccapo/stvena/stvena
 
       - name: Audit
-        run: brew audit --formula --online --git nccapo/stvena/stvena
+        run: brew audit --formula --online nccapo/stvena/stvena

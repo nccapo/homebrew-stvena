@@ -22,6 +22,18 @@ brew trust --formula nccapo/stvena/stvena
 brew install stvena
 ```
 
+### Coming from `install.sh`
+
+The [install script](https://github.com/nccapo/stvena/blob/main/install.sh)
+picks the first writable binary directory, which is often one Homebrew also
+links into (`/opt/homebrew/bin` or `/usr/local/bin`). Homebrew will not
+overwrite a file it does not own, so remove that binary before installing:
+
+```sh
+command -v stvena   # then remove the path it prints
+brew install nccapo/stvena/stvena
+```
+
 Upgrade and uninstall as usual:
 
 ```sh

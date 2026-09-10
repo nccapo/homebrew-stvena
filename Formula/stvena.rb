@@ -1,7 +1,6 @@
 class Stvena < Formula
   desc "Live review workspace beside Codex and Claude Code in your terminal"
   homepage "https://github.com/nccapo/stvena"
-  version "0.1.4"
   license "MIT"
 
   livecheck do

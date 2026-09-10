@@ -40,7 +40,7 @@ jobs:
             echo "Formula already tracks the requested release."
             exit 0
           fi
-          version="$(sed -n 's/^  version "\(.*\)"/\1/p' Formula/stvena.rb)"
+          version="$(sed -n 's|.*/releases/download/v\([^/]*\)/.*|\1|p' Formula/stvena.rb | head -n 1)"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "stvena $version" -- Formula/stvena.rb

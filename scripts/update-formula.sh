@@ -22,7 +22,6 @@ if [ -z "$tag" ]; then
 fi
 [ -n "$tag" ] || { echo "update-formula: could not determine the release tag" >&2; exit 1; }
 case "$tag" in v*) ;; *) tag="v$tag" ;; esac
-version="${tag#v}"
 
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT HUP INT TERM
@@ -40,16 +39,12 @@ for archive in $archives; do
   echo "  $archive  $sum"
 done
 
-awk -v version="$version" -v tag="$tag" -v sums="$work/sums" '
+awk -v tag="$tag" -v sums="$work/sums" '
   BEGIN {
     while ((getline line < sums) > 0) {
       split(line, f, " ")
       sha[f[1]] = f[2]
     }
-  }
-  /^  version "/ {
-    print "  version \"" version "\""
-    next
   }
   /^ *url "https:\/\/github.com\/nccapo\/stvena\/releases\/download\// {
     match($0, /stvena_[a-z0-9]+_[a-z0-9]+\.tar\.gz/)

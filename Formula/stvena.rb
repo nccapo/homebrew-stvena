@@ -13,25 +13,25 @@ class Stvena < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/nccapo/stvena/releases/download/v0.1.6/stvena_darwin_arm64.tar.gz"
-      sha256 "0d9743d1a37adbd11d3aae001b83d2798a46804f351895c682511927225b6b75"
+      url "https://github.com/nccapo/stvena/releases/download/v0.4.0/stvena_darwin_arm64.tar.gz"
+      sha256 "62f4ebb76088e864c27f5ee361c98da50b3327d686ff2ae44f5d7f698d412e27"
     end
 
     on_intel do
-      url "https://github.com/nccapo/stvena/releases/download/v0.1.6/stvena_darwin_amd64.tar.gz"
-      sha256 "157bf166246d0b7a56433d5101b0c250a4490ffa0bce9dfb2448807303a9cd3f"
+      url "https://github.com/nccapo/stvena/releases/download/v0.4.0/stvena_darwin_amd64.tar.gz"
+      sha256 "dc54575fbb8bd88bb9ae8ff1b6164983a14315d3ef23cd687b6cde2024c8ccb5"
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/nccapo/stvena/releases/download/v0.1.6/stvena_linux_arm64.tar.gz"
-      sha256 "94372ab0054ff0c607d59f3d0a942dc46d970a132132cbf76e884d08670306a7"
+      url "https://github.com/nccapo/stvena/releases/download/v0.4.0/stvena_linux_arm64.tar.gz"
+      sha256 "afa0c76e5e0edff63fc6cd3113665aff8c55b2c1aa971b3bf2710d16e6652db1"
     end
 
     on_intel do
-      url "https://github.com/nccapo/stvena/releases/download/v0.1.6/stvena_linux_amd64.tar.gz"
-      sha256 "f6db2fb10d7e0eb682fae8b7392ead4781c7751350fa5a5808c84f082c058ce0"
+      url "https://github.com/nccapo/stvena/releases/download/v0.4.0/stvena_linux_amd64.tar.gz"
+      sha256 "c22af66b01401e005986dbb697de89086c9bea3827850985db462d1a46062315"
     end
   end
 
